@@ -95,21 +95,36 @@ Auth: bcrypt, cookie-parser
 📁 Project Structure
 text
 crowdfunding-platform/
+
 ├── backend/
+
 │   ├── server.js
+
 │   ├── users.json
+
 │   ├── projects.json
+
 │   └── package.json
+
 └── frontend/
     ├── index.html
+    
     ├── project.html
+    
     ├── submit-project.html
+    
     ├── profile.html
+    
     ├── login.html
+    
     ├── signup.html
+    
     ├── main.css
+    
     ├── auth.css
+    
     └── styles.css
+    
 🚦 Getting Started
 Clone the repo
 
