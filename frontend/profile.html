@@ -11,10 +11,10 @@
       <div class="site-title">🎬 FilmCrowd</div>
       <div class="nav-links">
         <a href="index.html" id="home-link">Home</a>
-        <a href="submit-project.html" id="submit-link">Submit Project</a>
-        <a href="#" id="logout-link">Logout</a>
-        <a href="login.html" id="login-link" style="display:none;">Login</a>
-        <a href="signup.html" id="signup-link" style="display:none;">Signup</a>
+        <a href="submit-project.html" id="submit-link" style="display:none;">Make a Project</a>
+        <a href="#" id="logout-link" style="display:none;">Sign Out</a>
+        <a href="login.html" id="login-link">Login</a>
+        <a href="signup.html" id="signup-link">Signup</a>
       </div>
     </nav>
     <main>
@@ -40,31 +40,31 @@
         return;
       }
       const data = await res.json();
-      document.getElementById('profile-info').innerHTML = `<p><strong>Username:</strong> ${data.username}</p>`;
+      const profileInfo = document.getElementById('profile-info');
+      profileInfo.innerHTML = `<p><strong>Username:</strong> ${data.username}</p>`;
+
       const projectList = document.getElementById('project-list');
       projectList.innerHTML = data.projects.length === 0 ? '<li>No projects submitted yet.</li>' : '';
       data.projects.forEach(p => {
-        let li = document.createElement('li');
+        const li = document.createElement('li');
         li.textContent = p.title;
         projectList.appendChild(li);
       });
+
       const donationList = document.getElementById('donation-list');
       donationList.innerHTML = data.donations.length === 0 ? '<li>No donations made yet.</li>' : '';
       data.donations.forEach(d => {
-        let li = document.createElement('li');
+        const li = document.createElement('li');
         li.textContent = `Donated $${d.amount} to "${d.projectTitle}"`;
         donationList.appendChild(li);
       });
     }
     loadProfile();
-    document.getElementById('logout-link').onclick = async () => {
-      await fetch('/api/logout', { method: 'POST' });
-      window.location.href = 'login.html';
-    };
+
     async function checkAuth() {
       try {
         const res = await fetch('/api/me');
-        if(res.ok) {
+        if (res.ok) {
           document.getElementById('login-link').style.display = 'none';
           document.getElementById('signup-link').style.display = 'none';
           document.getElementById('logout-link').style.display = 'inline-block';
@@ -75,11 +75,16 @@
           document.getElementById('logout-link').style.display = 'none';
           document.getElementById('submit-link').style.display = 'none';
         }
-      } catch(e) {
+      } catch (e) {
         console.error(e);
       }
     }
     checkAuth();
+
+    document.getElementById('logout-link').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      window.location.href = 'login.html';
+    });
   </script>
 </body>
 </html>

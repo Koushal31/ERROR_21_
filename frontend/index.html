@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>FilmCrowd | Discover Films</title>
   <link rel="stylesheet" href="main.css" />
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet"/>
 </head>
 <body>
   <div class="main-bg">
@@ -20,63 +19,73 @@
     <main>
       <h1 class="headline">Discover & Fund Indie Films</h1>
       <div id="projects-list" class="project-grid">
-        <!-- Projects will load here -->
+        <!-- Projects will be loaded here -->
       </div>
     </main>
   </div>
+
   <script>
-    async function loadProjects() {
-      const projects = await fetch('/api/projects').then(res => res.json());
-      const list = document.getElementById('projects-list');
-      list.innerHTML = '';
-      if (projects.length === 0) {
-        list.innerHTML = '<div class="no-projects">No film projects posted yet.</div>';
-      }
-      projects.forEach(p => {
-        const percent = Math.min(100, Math.round(100 * p.fundsRaised / p.fundingGoal));
-        const card = document.createElement('div');
-        card.className = 'project-card';
-        card.innerHTML = `
-          <h2>${p.title}</h2>
-          <div class="creator">by ${p.creator || "anonymous"}</div>
-          <p>${p.description.substring(0, 110)}${p.description.length>110?"...":""}</p>
-          <div class="progress-info">
-            <span class="raised">$${p.fundsRaised}</span>
-            <span class="goal">of $${p.fundingGoal}</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill" style="width:${percent}%;"></div>
-          </div>
-          <a href="project.html?id=${p.id}" class="view-btn">View Project</a>
-        `;
-        list.appendChild(card);
-      });
-    }
-    loadProjects();
-
-    async function checkAuth() {
-      try {
-        const res = await fetch('/api/me');
-        if(res.ok) {
-          document.getElementById('login-link').style.display = 'none';
-          document.getElementById('signup-link').style.display = 'none';
-          document.getElementById('logout-link').style.display = 'inline-block';
-          document.getElementById('submit-link').style.display = 'inline-block';
-        } else {
-          document.getElementById('login-link').style.display = 'inline-block';
-          document.getElementById('signup-link').style.display = 'inline-block';
-          document.getElementById('logout-link').style.display = 'none';
-          document.getElementById('submit-link').style.display = 'none';
+    // Run after DOM is ready
+    document.addEventListener("DOMContentLoaded", () => {
+      async function checkAuth() {
+        try {
+          const res = await fetch('/api/me');
+          if (res.ok) {
+            // logged in
+            document.getElementById('login-link').style.display = 'none';
+            document.getElementById('signup-link').style.display = 'none';
+            document.getElementById('logout-link').style.display = 'inline-block';
+            document.getElementById('submit-link').style.display = 'inline-block';
+          } else {
+            // not logged in
+            document.getElementById('login-link').style.display = 'inline-block';
+            document.getElementById('signup-link').style.display = 'inline-block';
+            document.getElementById('logout-link').style.display = 'none';
+            document.getElementById('submit-link').style.display = 'none';
+          }
+        } catch (e) {
+          console.error(e);
         }
-      } catch(e) {
-        console.error(e);
       }
-    }
-    checkAuth();
 
-    document.getElementById('logout-link').addEventListener('click', async () => {
-      await fetch('/api/logout', { method: 'POST' });
-      window.location.href = 'login.html';
+      checkAuth();
+
+      document.getElementById('logout-link').addEventListener('click', async e => {
+        e.preventDefault();
+        await fetch('/api/logout', { method: 'POST' });
+        window.location.href = 'login.html';
+      });
+
+      async function loadProjects() {
+        const projects = await fetch('/api/projects').then(r => r.json());
+        const list = document.getElementById('projects-list');
+        list.innerHTML = '';
+        if (projects.length === 0) {
+          list.innerHTML = '<div class="no-projects">No film projects posted yet.</div>';
+          return;
+        }
+        projects.forEach(p => {
+          const percent = Math.min(100, Math.round(100*p.fundsRaised/p.fundingGoal));
+          const card = document.createElement('div');
+          card.className = 'project-card';
+          card.innerHTML = `
+            <h2>${p.title}</h2>
+            <div class="creator">by ${p.creator || "anonymous"}</div>
+            <p>${p.description.substring(0,110)}${p.description.length > 110 ? '...' : ''}</p>
+            <div class="progress-info">
+              <span class="raised">$${p.fundsRaised}</span>
+              <span class="goal">of $${p.fundingGoal}</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width:${percent}%;"></div>
+            </div>
+            <a href="project.html?id=${p.id}" class="view-btn">View Project</a>
+          `;
+          list.appendChild(card);
+        });
+      }
+
+      loadProjects();
     });
   </script>
 </body>

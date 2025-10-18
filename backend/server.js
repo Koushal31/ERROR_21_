@@ -11,12 +11,10 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// In-memory "database"
 const users = {};
 const sessions = {};
 const projects = {};
 
-// Middleware to protect routes
 function authMiddleware(req, res, next) {
   const sessionId = req.cookies.sessionId;
   if (!sessionId || !sessions[sessionId]) {
@@ -26,7 +24,6 @@ function authMiddleware(req, res, next) {
   next();
 }
 
-// Authentication routes
 app.post('/api/signup', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
@@ -52,7 +49,6 @@ app.post('/api/logout', authMiddleware, (req, res) => {
   res.json({ message: 'Logged out' });
 });
 
-// Project routes
 app.post('/api/projects', authMiddleware, (req, res) => {
   const { title, description, fundingGoal } = req.body;
   if (!title || !description || !fundingGoal) return res.status(400).json({ error: 'Title, description and fundingGoal required' });
@@ -85,13 +81,11 @@ app.post('/api/projects/:id/donate', authMiddleware, (req, res) => {
   const { amount } = req.body;
   const donAmount = Number(amount);
   if (!donAmount || donAmount <= 0) return res.status(400).json({ error: 'Invalid donation amount' });
-  // Add donation to project
   project.fundsRaised += donAmount;
   project.donors.push({ username: req.user.username, amount: donAmount });
   res.json({ message: 'Donation successful', fundsRaised: project.fundsRaised });
 });
 
-// Get current user profile, projects, donations
 app.get('/api/me', authMiddleware, (req, res) => {
   const username = req.user.username;
   const userProjects = Object.values(projects).filter(p => p.creator === username);
