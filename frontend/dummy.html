@@ -1,1 +1,12 @@
 <!--hlo-->
+<!--// small helper to allow auth.setUser if needed
+auth.setUser = (fnOrVal) => {
+if (typeof fnOrVal === "function") {
+const newUser = fnOrVal(auth.user);
+localStorage.setItem("mc_user", JSON.stringify(newUser));
+window.location.reload();
+} else {
+localStorage.setItem("mc_user", JSON.stringify(fnOrVal));
+window.location.reload();
+}
+};  -->
