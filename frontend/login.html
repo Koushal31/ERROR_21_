@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Film Crowdfunding</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Login</h1>
+  <form id="login-form">
+    <label>Username: <input id="username" required /></label><br />
+    <label>Password: <input type="password" id="password" required /></label><br />
+    <button type="submit">Login</button>
+  </form>
+  <p id="error-msg" style="color:red"></p>
+  <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('login-form').onsubmit = async e => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      if (res.ok) {
+        window.location.href = 'index.html';
+      } else {
+        const err = await res.json();
+        document.getElementById('error-msg').textContent = err.error || 'Login failed';
+      }
+    };
+  </script>
+</body>
+</html>

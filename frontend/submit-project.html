@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Submit Project - Film Crowdfunding</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Submit New Film Project</h1>
+  <form id="project-form">
+    <label>Title: <input id="title" required /></label><br />
+    <label>Description:<br />
+      <textarea id="description" required></textarea>
+    </label><br />
+    <label>Funding Goal ($): <input id="fundingGoal" type="number" min="1" required /></label><br />
+    <button type="submit">Submit Project</button>
+  </form>
+  <p id="message" style="color:green"></p>
+  <p><a href="index.html">Back to Projects</a></p>
+
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('project-form').onsubmit = async e => {
+      e.preventDefault();
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const fundingGoal = document.getElementById('fundingGoal').value;
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description, fundingGoal }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById('message').textContent = 'Project submitted successfully! ID: ' + data.projectId;
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to submit project');
+      }
+    };
+  </script>
+</body>
+</html>

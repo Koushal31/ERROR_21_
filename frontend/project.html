@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Project Details - Film Crowdfunding</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1 id="title">Loading...</h1>
+  <p id="description"></p>
+  <p>Funds Raised: $<span id="fundsRaised">0</span> / $<span id="fundingGoal">0</span></p>
+
+  <h2>Donate</h2>
+  <form id="donate-form">
+    <label>Amount ($): <input id="donateAmount" type="number" min="1" required /></label>
+    <button type="submit">Donate</button>
+  </form>
+  <p id="donate-msg" style="color:green"></p>
+
+  <p><a href="index.html">Back to Projects</a></p>
+
+  <script src="app.js"></script>
+  <script>
+    async function loadProject() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const res = await fetch('/api/projects/' + id);
+      if (!res.ok) {
+        document.body.innerHTML = '<p>Project not found.</p><a href="index.html">Back to Projects</a>';
+        return;
+      }
+      const project = await res.json();
+      document.getElementById('title').textContent = project.title;
+      document.getElementById('description').textContent = project.description;
+      document.getElementById('fundsRaised').textContent = project.fundsRaised;
+      document.getElementById('fundingGoal').textContent = project.fundingGoal;
+
+      document.getElementById('donate-form').onsubmit = async e => {
+        e.preventDefault();
+        const amount = document.getElementById('donateAmount').value;
+        const res = await fetch('/api/projects/' + id + '/donate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('donate-msg').textContent = 'Thank you! Donation successful. Total funds: $' + data.fundsRaised;
+          document.getElementById('fundsRaised').textContent = data.fundsRaised;
+        } else {
+          const err = await res.json();
+          alert(err.error || 'Donation failed');
+        }
+      };
+    }
+    loadProject();
+  </script>
+</body>
+</html>
