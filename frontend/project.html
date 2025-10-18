@@ -1,124 +1,111 @@
-/* Cinematic & Modern Project Page Style */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Project Details - FilmCrowd</title>
+  <link rel="stylesheet" href="main.css" />
+</head>
+<body>
+  <div class="main-bg">
+    <nav class="navbar">
+      <div class="site-title">🎬 FilmCrowd</div>
+      <div class="nav-links">
+        <a href="login.html" id="login-link">Login</a>
+        <a href="signup.html" id="signup-link">Signup</a>
+        <a href="index.html" id="home-link">Home</a>
+        <a href="submit-project.html" id="submit-link" style="display:none;">Make a Project</a>
+        <a href="#" id="logout-link" style="display:none;">Sign Out</a>
+      </div>
+    </nav>
+    <main>
+      <h1 id="title" class="headline">Loading...</h1>
+      <p id="description" class="project-description"></p>
+      <div class="progress-info">
+        <span><strong>Funds Raised: </strong>$<span id="fundsRaised">0</span></span>
+        <span><strong>Goal: </strong>$<span id="fundingGoal">0</span></span>
+      </div>
+      <div class="progress-bar-bg">
+        <div id="progressBar" class="progress-bar-fill" style="width: 0%"></div>
+      </div>
 
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Montserrat', sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  color: #eee;
-  min-height: 100vh;
-}
+      <section class="donate-section">
+        <h2>Make a Donation</h2>
+        <form id="donate-form" class="submit-form">
+          <label for="donateAmount">Donation Amount ($)</label>
+          <input id="donateAmount" name="donateAmount" type="number" min="1" required placeholder="Enter amount" />
+          <button type="submit" class="submit-btn">Donate</button>
+        </form>
+        <p id="donate-msg" class="message-text"></p>
+      </section>
+      <p><a href="index.html" style="color:#f8c94a; font-weight:600;">← Back to Projects</a></p>
+    </main>
+  </div>
 
-.main-bg {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: auto;
-}
+  <script>
+    async function loadProject() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const res = await fetch('/api/projects/' + id);
+      if (!res.ok) {
+        document.body.innerHTML = '<p>Project not found.</p><a href="index.html">Back to Projects</a>';
+        return;
+      }
+      const project = await res.json();
 
-/* Navbar styles (if needed for project page) */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 2rem;
-  background: rgba(20, 20, 35, 0.7);
-  border-radius: 15px;
-  box-shadow: 0 0 40px rgb(248 201 74 / 0.45);
-  font-weight: 700;
-  font-family: 'Playfair Display', serif;
-  color: #f8c94a;
-  margin-bottom: 2rem;
-}
+      document.getElementById('title').textContent = project.title;
+      document.getElementById('description').textContent = project.description;
+      document.getElementById('fundsRaised').textContent = project.fundsRaised;
+      document.getElementById('fundingGoal').textContent = project.fundingGoal;
 
-.navbar a {
-  color: #f8c94a;
-  text-decoration: none;
-  margin-left: 1.5rem;
-  font-weight: 700;
-  transition: color 0.3s ease;
-}
+      const percent = Math.min(100, Math.round(100 * project.fundsRaised / project.fundingGoal));
+      document.getElementById('progressBar').style.width = percent + '%';
 
-.navbar a:hover {
-  color: #ff5263;
-  filter: drop-shadow(0 0 8px #ff5263);
-}
+      document.getElementById('donate-form').onsubmit = async e => {
+        e.preventDefault();
+        const amount = document.getElementById('donateAmount').value;
+        const res = await fetch('/api/projects/' + id + '/donate', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ amount })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('donate-msg').textContent = 'Thank you! Donation successful. Total funds: $' + data.fundsRaised;
+          document.getElementById('fundsRaised').textContent = data.fundsRaised;
+          document.getElementById('progressBar').style.width = Math.min(100, Math.round(100 * data.fundsRaised / project.fundingGoal)) + '%';
+          e.target.reset();
+        } else {
+          const err = await res.json();
+          alert(err.error || 'Donation failed');
+        }
+      };
+    }
+    loadProject();
 
-/* Project Header */
-.project-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  color: #f8c94a;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid #f8c94a66;
-  padding-bottom: 0.5rem;
-}
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/me');
+        if(res.ok) {
+          document.getElementById('login-link').style.display = 'none';
+          document.getElementById('signup-link').style.display = 'none';
+          document.getElementById('logout-link').style.display = 'inline-block';
+          document.getElementById('submit-link').style.display = 'inline-block';
+        } else {
+          document.getElementById('login-link').style.display = 'inline-block';
+          document.getElementById('signup-link').style.display = 'inline-block';
+          document.getElementById('logout-link').style.display = 'none';
+          document.getElementById('submit-link').style.display = 'none';
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    checkAuth();
 
-/* Project Description */
-.project-desc {
-  font-size: 1.17rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-  color: #ccc;
-}
-
-/* Progress bar styles */
-.progress-container {
-  background: rgba(255,255,255,0.15);
-  border-radius: 30px;
-  height: 20px;
-  margin-bottom: 2rem;
-  overflow: hidden;
-  width: 100%;
-  max-width: 600px;
-}
-
-.progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #f8c94a 55%, #ff5263 100%);
-  transition: width 0.5s ease;
-}
-
-/* Donate button styles */
-.donate-btn {
-  display: inline-block;
-  padding: 0.75rem 1.8rem;
-  background: #f8c94a;
-  border: none;
-  border-radius: 30px;
-  font-weight: 700;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  cursor: pointer;
-  box-shadow: 0 0 25px #f8c94a88;
-  transition: background 0.3s, box-shadow 0.3s;
-}
-.donate-btn:hover {
-  background: #ff5263;
-  box-shadow: 0 0 30px #ff5263cc;
-  color: #fff;
-}
-
-/* Donation message styling */
-#donation-message {
-  margin-top: 1.5rem;
-  color: #45ffca;
-  font-weight: 700;
-}
-
-/* Responsive design */
-@media(max-width: 768px) {
-  body {
-    font-size: 14px;
-  }
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .progress-container {
-    max-width: 100%;
-  }
-  .donate-btn {
-    width: 100%;
-    text-align: center;
-  }
-}
+    document.getElementById('logout-link').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

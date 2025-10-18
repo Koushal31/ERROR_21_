@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
 body, html {
   margin: 0;
   padding: 0;
   font-family: 'Montserrat', sans-serif;
-  background:
-    linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: #eee;
   min-height: 100vh;
 }
@@ -27,7 +27,7 @@ body, html {
   font-weight: 700;
   font-family: 'Playfair Display', serif;
   color: #f8c94a;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .navbar a {
@@ -79,14 +79,6 @@ body, html {
   color: #ffce73;
 }
 
-.creator svg {
-  margin-left: 0.8rem;
-  width: 20px;
-  height: 20px;
-  fill: #f8c94a;
-  filter: drop-shadow(0 0 3px #f8c94a);
-}
-
 .project-card p {
   color: #fff;
   margin-bottom: 1.3rem;
@@ -97,10 +89,11 @@ body, html {
 .progress-bar-bg {
   width: 100%;
   height: 18px;
-  background: rgba(255 255 255 / 0.15);
+  background: rgba(255,255,255,0.15);
   border-radius: 30px;
   overflow: hidden;
   margin-bottom: 1rem;
+  max-width: 600px;
 }
 
 .progress-bar-fill {
@@ -133,59 +126,95 @@ body, html {
 }
 
 .submit-btn {
-  background: #f8c94a;
+  background-color: #f8c94a;
   border: none;
   border-radius: 30px;
   padding: 0.75rem 1.8rem;
-  font-weight: 800;
+  font-weight: 700;
   font-family: 'Playfair Display', serif;
   font-size: 1.1rem;
   cursor: pointer;
-  box-shadow: 0 0 25px #f8c94aaa;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 25px #f8c94a88;
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
 .submit-btn:hover {
-  background: #ff5263;
-  box-shadow: 0 0 30px #ff5263cc;
+  background-color: #ff5263;
+  box-shadow: 0 0 40px #ff5263cc;
   color: #fff;
 }
 
-/* User badges */
-.user-badge {
-  display: inline-flex;
-  align-items: center;
-  background: #ffce73cc;
-  border-radius: 15px;
-  padding: 0.15rem 0.6rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #562b08;
-}
+/* Submit project page form styling */
 
-.user-badge svg {
-  width: 16px;
-  height: 16px;
-  margin-left: 0.3rem;
-  fill: #562b08;
-  filter: drop-shadow(0 0 2px #562b08);
-}
-
-/* Skeleton loading placeholders */
-.skeleton {
-  background: linear-gradient(90deg, #202639 25%, #2a3851 50%, #202639 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.6s infinite linear;
+form#project-form, form#donate-form {
+  background: rgba(255, 255, 255, 0.07);
+  padding: 2rem;
   border-radius: 20px;
-  height: 6rem;
-  margin-bottom: 2rem;
+  box-shadow: 0 8px 20px rgb(248 201 74 / 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: auto;
 }
 
-@keyframes shimmer {
-  from {
-    background-position: 200% 0;
+form#project-form label, form#donate-form label {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #f8f8f8;
+}
+
+form#project-form input[type="text"],
+form#project-form input[type="number"],
+form#project-form textarea,
+form#donate-form input[type="number"] {
+  padding: 1rem;
+  border: none;
+  border-radius: 15px;
+  background-color: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 1.1rem;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  border: 1px solid rgba(255,255,255,0.3);
+  resize: vertical;
+}
+
+form#project-form input[type="text"]:focus,
+form#project-form input[type="number"]:focus,
+form#project-form textarea:focus,
+form#donate-form input[type="number"]:focus {
+  outline: none;
+  background-color: rgba(255,255,255,0.3);
+  box-shadow: 0 0 20px #f8c94a;
+}
+
+/* Project description and donate section */
+.project-description {
+  font-size: 1.17rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  color: #ccc;
+  max-width: 700px;
+  margin: 1rem auto 2rem auto;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
   }
-  to {
-    background-position: -200% 0;
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .progress-bar-bg {
+    max-width: 100%;
+  }
+  .submit-btn {
+    width: 100%;
+  }
+  form#project-form {
+    max-width: 100%;
+    padding: 1rem;
   }
 }
