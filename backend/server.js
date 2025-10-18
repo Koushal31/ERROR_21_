@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -18,6 +18,7 @@ const projects = {};
 function authMiddleware(req, res, next) {
   const sessionId = req.cookies.sessionId;
   if (!sessionId || !sessions[sessionId]) {
+    console.log('Unauthorized access attempt');
     return res.status(401).json({ error: 'Unauthorized' });
   }
   req.user = sessions[sessionId];
@@ -38,7 +39,7 @@ app.post('/api/login', (req, res) => {
   if (!user || user.password !== password) return res.status(400).json({ error: 'Invalid username or password' });
   const sessionId = uuidv4();
   sessions[sessionId] = user;
-  res.cookie('sessionId', sessionId, { httpOnly: true });
+  res.cookie('sessionId', sessionId, { httpOnly: true, sameSite: 'lax' });
   res.json({ message: 'Logged in' });
 });
 
