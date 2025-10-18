@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Profile - FilmCrowd</title>
+  <link rel="stylesheet" href="main.css" />
+</head>
+<body>
+  <div class="main-bg">
+    <nav class="navbar">
+      <div class="site-title">🎬 FilmCrowd</div>
+      <div class="nav-links">
+        <a href="index.html" id="home-link">Home</a>
+        <a href="submit-project.html" id="submit-link">Submit Project</a>
+        <a href="#" id="logout-link">Logout</a>
+        <a href="login.html" id="login-link" style="display:none;">Login</a>
+        <a href="signup.html" id="signup-link" style="display:none;">Signup</a>
+      </div>
+    </nav>
+    <main>
+      <h1 class="headline">Your Profile</h1>
+      <section id="profile-info"></section>
+      <section id="your-projects">
+        <h2>Your Submitted Projects</h2>
+        <ul id="project-list"></ul>
+      </section>
+      <section id="your-donations">
+        <h2>Your Donations</h2>
+        <ul id="donation-list"></ul>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    async function loadProfile() {
+      const res = await fetch('/api/me');
+      if (!res.ok) {
+        alert('Please login first.');
+        window.location.href = 'login.html';
+        return;
+      }
+      const data = await res.json();
+      document.getElementById('profile-info').innerHTML = `<p><strong>Username:</strong> ${data.username}</p>`;
+      const projectList = document.getElementById('project-list');
+      projectList.innerHTML = data.projects.length === 0 ? '<li>No projects submitted yet.</li>' : '';
+      data.projects.forEach(p => {
+        let li = document.createElement('li');
+        li.textContent = p.title;
+        projectList.appendChild(li);
+      });
+      const donationList = document.getElementById('donation-list');
+      donationList.innerHTML = data.donations.length === 0 ? '<li>No donations made yet.</li>' : '';
+      data.donations.forEach(d => {
+        let li = document.createElement('li');
+        li.textContent = `Donated $${d.amount} to "${d.projectTitle}"`;
+        donationList.appendChild(li);
+      });
+    }
+    loadProfile();
+    document.getElementById('logout-link').onclick = async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      window.location.href = 'login.html';
+    };
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/me');
+        if(res.ok) {
+          document.getElementById('login-link').style.display = 'none';
+          document.getElementById('signup-link').style.display = 'none';
+          document.getElementById('logout-link').style.display = 'inline-block';
+          document.getElementById('submit-link').style.display = 'inline-block';
+        } else {
+          document.getElementById('login-link').style.display = 'inline-block';
+          document.getElementById('signup-link').style.display = 'inline-block';
+          document.getElementById('logout-link').style.display = 'none';
+          document.getElementById('submit-link').style.display = 'none';
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    checkAuth();
+  </script>
+</body>
+</html>

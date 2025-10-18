@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Login - Film Crowdfunding</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8"/>
+  <title>Login</title>
+  <link rel="stylesheet" href="auth.css"/>
 </head>
 <body>
-  <h1>Login</h1>
-  <form id="login-form">
-    <label>Username: <input id="username" required /></label><br />
-    <label>Password: <input type="password" id="password" required /></label><br />
-    <button type="submit">Login</button>
-  </form>
-  <p id="error-msg" style="color:red"></p>
-  <p>Don't have an account? <a href="signup.html">Sign up</a></p>
-
-  <script src="app.js"></script>
+  <div class="auth-bg">
+    <div class="auth-card">
+      <h2>Login</h2>
+      <form id="login-form">
+        <input type="text" id="username" placeholder="Username" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <div class="auth-links">
+          <a href="#">Forgot Password?</a>
+        </div>
+        <button type="submit" class="auth-btn">Login</button>
+      </form>
+      <div class="auth-bottom">
+        Not a Member? <a href="signup.html">Signup</a>
+      </div>
+      <p id="error-msg"></p>
+    </div>
+  </div>
   <script>
     document.getElementById('login-form').onsubmit = async e => {
       e.preventDefault();
@@ -24,11 +31,10 @@
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password })
       });
-      if (res.ok) {
-        window.location.href = 'index.html';
-      } else {
+      if (res.ok) window.location.href = 'index.html';
+      else {
         const err = await res.json();
         document.getElementById('error-msg').textContent = err.error || 'Login failed';
       }

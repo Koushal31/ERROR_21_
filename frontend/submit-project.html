@@ -2,23 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Submit Project - Film Crowdfunding</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Submit Film Project - FilmCrowd</title>
+  <link rel="stylesheet" href="main.css" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet"/>
 </head>
 <body>
-  <h1>Submit New Film Project</h1>
-  <form id="project-form">
-    <label>Title: <input id="title" required /></label><br />
-    <label>Description:<br />
-      <textarea id="description" required></textarea>
-    </label><br />
-    <label>Funding Goal ($): <input id="fundingGoal" type="number" min="1" required /></label><br />
-    <button type="submit">Submit Project</button>
-  </form>
-  <p id="message" style="color:green"></p>
-  <p><a href="index.html">Back to Projects</a></p>
+  <div class="main-bg">
+    <nav class="navbar">
+      <div class="site-title">🎬 FilmCrowd</div>
+      <div class="nav-links">
+        <a href="login.html" id="login-link">Login</a>
+        <a href="signup.html" id="signup-link">Signup</a>
+        <a href="index.html" id="home-link">Home</a>
+        <a href="#" id="logout-link" style="display:none;">Sign Out</a>
+      </div>
+    </nav>
+    <main>
+      <h1 class="headline">Submit Your Film Project</h1>
+      <form id="project-form" class="submit-form">
+        <label for="title">Project Title</label>
+        <input id="title" name="title" type="text" required placeholder="Enter film project title" />
 
-  <script src="app.js"></script>
+        <label for="description">Project Description</label>
+        <textarea id="description" name="description" rows="6" required placeholder="Write a brief description"></textarea>
+
+        <label for="fundingGoal">Funding Goal ($)</label>
+        <input id="fundingGoal" name="fundingGoal" type="number" min="1" required placeholder="Enter funding goal" />
+
+        <button type="submit" class="submit-btn">Submit Project</button>
+      </form>
+      <p id="message" class="message-text"></p>
+    </main>
+  </div>
   <script>
     document.getElementById('project-form').onsubmit = async e => {
       e.preventDefault();
@@ -33,11 +48,36 @@
       if (res.ok) {
         const data = await res.json();
         document.getElementById('message').textContent = 'Project submitted successfully! ID: ' + data.projectId;
+        e.target.reset();
       } else {
         const err = await res.json();
         alert(err.error || 'Failed to submit project');
       }
     };
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/me');
+        if(res.ok) {
+          document.getElementById('login-link').style.display = 'none';
+          document.getElementById('signup-link').style.display = 'none';
+          document.getElementById('logout-link').style.display = 'inline-block';
+        } else {
+          document.getElementById('login-link').style.display = 'inline-block';
+          document.getElementById('signup-link').style.display = 'inline-block';
+          document.getElementById('logout-link').style.display = 'none';
+          window.location.href = 'login.html';  // Redirect if not logged in
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    checkAuth();
+
+    document.getElementById('logout-link').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      window.location.href = 'login.html';
+    });
   </script>
 </body>
 </html>

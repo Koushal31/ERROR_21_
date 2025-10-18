@@ -2,24 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Project Details - Film Crowdfunding</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Project Details - FilmCrowd</title>
+  <link rel="stylesheet" href="main.css" />
 </head>
 <body>
-  <h1 id="title">Loading...</h1>
-  <p id="description"></p>
-  <p>Funds Raised: $<span id="fundsRaised">0</span> / $<span id="fundingGoal">0</span></p>
+  <div class="main-bg">
+    <nav class="navbar">
+      <div class="site-title">🎬 FilmCrowd</div>
+      <div class="nav-links">
+        <a href="login.html" id="login-link">Login</a>
+        <a href="signup.html" id="signup-link">Signup</a>
+        <a href="index.html" id="home-link">Home</a>
+        <a href="submit-project.html" id="submit-link" style="display:none;">Make a Project</a>
+        <a href="#" id="logout-link" style="display:none;">Sign Out</a>
+      </div>
+    </nav>
+    <main>
+      <h1 id="title" class="headline">Loading...</h1>
+      <p id="description" class="project-description"></p>
+      <div class="progress-info">
+        <span><strong>Funds Raised: </strong>$<span id="fundsRaised">0</span></span>
+        <span><strong>Goal: </strong>$<span id="fundingGoal">0</span></span>
+      </div>
+      <div class="progress-bar-bg">
+        <div id="progressBar" class="progress-bar-fill" style="width: 0%"></div>
+      </div>
 
-  <h2>Donate</h2>
-  <form id="donate-form">
-    <label>Amount ($): <input id="donateAmount" type="number" min="1" required /></label>
-    <button type="submit">Donate</button>
-  </form>
-  <p id="donate-msg" style="color:green"></p>
+      <section class="donate-section">
+        <h2>Make a Donation</h2>
+        <form id="donate-form" class="submit-form">
+          <label for="donateAmount">Donation Amount ($)</label>
+          <input id="donateAmount" name="donateAmount" type="number" min="1" required placeholder="Enter amount" />
+          <button type="submit" class="submit-btn">Donate</button>
+        </form>
+        <p id="donate-msg" class="message-text"></p>
+      </section>
+      <p><a href="index.html" style="color:#f8c94a; font-weight:600;">← Back to Projects</a></p>
+    </main>
+  </div>
 
-  <p><a href="index.html">Back to Projects</a></p>
-
-  <script src="app.js"></script>
   <script>
     async function loadProject() {
       const params = new URLSearchParams(window.location.search);
@@ -30,23 +51,29 @@
         return;
       }
       const project = await res.json();
+
       document.getElementById('title').textContent = project.title;
       document.getElementById('description').textContent = project.description;
       document.getElementById('fundsRaised').textContent = project.fundsRaised;
       document.getElementById('fundingGoal').textContent = project.fundingGoal;
+
+      const percent = Math.min(100, Math.round(100 * project.fundsRaised / project.fundingGoal));
+      document.getElementById('progressBar').style.width = percent + '%';
 
       document.getElementById('donate-form').onsubmit = async e => {
         e.preventDefault();
         const amount = document.getElementById('donateAmount').value;
         const res = await fetch('/api/projects/' + id + '/donate', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount }),
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ amount })
         });
         if (res.ok) {
           const data = await res.json();
           document.getElementById('donate-msg').textContent = 'Thank you! Donation successful. Total funds: $' + data.fundsRaised;
           document.getElementById('fundsRaised').textContent = data.fundsRaised;
+          document.getElementById('progressBar').style.width = Math.min(100, Math.round(100 * data.fundsRaised / project.fundingGoal)) + '%';
+          e.target.reset();
         } else {
           const err = await res.json();
           alert(err.error || 'Donation failed');
@@ -54,6 +81,31 @@
       };
     }
     loadProject();
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/me');
+        if(res.ok) {
+          document.getElementById('login-link').style.display = 'none';
+          document.getElementById('signup-link').style.display = 'none';
+          document.getElementById('logout-link').style.display = 'inline-block';
+          document.getElementById('submit-link').style.display = 'inline-block';
+        } else {
+          document.getElementById('login-link').style.display = 'inline-block';
+          document.getElementById('signup-link').style.display = 'inline-block';
+          document.getElementById('logout-link').style.display = 'none';
+          document.getElementById('submit-link').style.display = 'none';
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    checkAuth();
+
+    document.getElementById('logout-link').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      window.location.href = 'login.html';
+    });
   </script>
 </body>
 </html>

@@ -1,0 +1,258 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  height: 100%;
+  background: #151a29;
+}
+
+.main-bg {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(10,20,40,0.91), rgba(15,20,23,0.93)), 
+    url('https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1500&q=80') center center / cover;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(20,30,50,0.89);
+  padding: 24px 50px 20px 50px;
+  box-shadow: 0 2px 12px rgba(20,46,80,0.09);
+  border-bottom: 1.5px solid #29304e;
+}
+
+.site-title {
+  color: #f8c94a;
+  font-size: 2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.12rem;
+  padding: 7px 19px;
+  border-radius: 6px;
+  transition: background 0.22s;
+  margin-left: 5px;
+  display: inline-block;
+}
+
+.nav-links a:hover {
+  background: #f8c94a;
+  color: #1c2137;
+}
+
+main {
+  max-width: 1300px;
+  margin: 40px auto 30px auto;
+  padding: 0 28px;
+}
+
+.headline {
+  text-align: center;
+  font-size: 2.4rem;
+  margin-bottom: 40px;
+  color: #fff;
+  letter-spacing: 2px;
+  font-family: 'Montserrat', serif;
+  text-shadow: 0 5px 10px rgba(0,0,0,0.28);
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 34px;
+}
+
+.project-card {
+  background: rgba(255,255,255,0.96);
+  border-radius: 13px;
+  box-shadow: 0 11px 34px rgba(0,0,15,0.16);
+  padding: 29px 26px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+  transition: transform 0.18s;
+  border: 1.2px solid #e5e2b3;
+}
+
+.project-card:hover {
+  transform: scale(1.025) translateY(-4px);
+  box-shadow: 0 18px 38px rgba(0,0,25,0.16), 0 1.7px 8px rgba(253,209,78,0.08);
+}
+
+.project-card h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.38rem;
+  color: #2b2959;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.creator {
+  font-size: 0.98rem;
+  color: #897819;
+  margin-bottom: 7px;
+}
+
+.project-card p {
+  color: #23293c;
+  margin-bottom: 13px;
+  min-height: 48px;
+  font-size: 1.01rem;
+}
+
+.progress-info {
+  margin-bottom: 4px;
+  font-size: 0.97rem;
+  color: #212a34;
+  display: flex;
+  justify-content: space-between;
+}
+
+.raised {
+  font-weight: 700;
+  color: #1ea463;
+}
+.goal {
+  font-weight: 700;
+  color: #666;
+}
+
+.progress-bar-bg {
+  background: #f3eec9;
+  border-radius: 100px;
+  height: 15px;
+  margin-bottom: 13px;
+  width: 100%;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f8c94a 55%, #ff5263 100%);
+  transition: width 0.4s ease;
+}
+
+.view-btn {
+  display: inline-block;
+  background: #2b2959;
+  color: #fff;
+  padding: 10px 25px;
+  border-radius: 9px;
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.08rem;
+  margin-top: 11px;
+  letter-spacing: 0.8px;
+  transition: background 0.25s;
+  text-decoration: none;
+}
+.view-btn:hover {
+  background: #f8c94a;
+  color: #222;
+}
+
+.no-projects {
+  color: #fff;
+  padding: 50px 0;
+  text-align: center;
+  font-size: 1.22rem;
+  letter-spacing: 1px;
+}
+
+/* Form Styling for submit and donation forms */
+.submit-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.submit-form label {
+  color: #f8f8f8;
+  font-weight: 600;
+  margin-bottom: 8px;
+  margin-top: 18px;
+}
+
+.submit-form input,
+.submit-form textarea {
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  background-color: rgba(255,255,255,0.85);
+  color: #1a1a1a;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+  resize: vertical;
+}
+
+.submit-form input:focus,
+.submit-form textarea:focus {
+  outline: none;
+  box-shadow: 0 5px 14px rgba(248,201,74,0.8);
+}
+
+.submit-btn {
+  margin-top: 24px;
+  background: #f8c94a;
+  border: none;
+  color: #222;
+  font-weight: 700;
+  padding: 14px 28px;
+  font-size: 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(248,201,74,0.8);
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover,
+.submit-btn:focus {
+  background: #dbb52a;
+}
+
+.message-text {
+  margin-top: 22px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #98ee99;
+}
+
+/* Project description, donate section */
+.project-description {
+  font-size: 1.17rem;
+  margin-bottom: 28px;
+  color: #f1f1f1;
+  max-width: 720px;
+}
+
+.donate-section {
+  max-width: 420px;
+  margin-bottom: 32px;
+}
+
+.donate-section label {
+  color: #f8f8f8;
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 16px;
+  }
+  main {
+    padding: 0 5px;
+  }
+}
